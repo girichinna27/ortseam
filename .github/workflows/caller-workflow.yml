@@ -1,0 +1,36 @@
+# .github/workflows/caller-workflow.yml
+name: Caller Workflow with Matrix Strategy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push-artifacts:
+    strategy:
+      matrix:
+        artifact:
+          - name: alpine1
+            dockerfile_path: "./alpine1/Dockerfile"
+            repository: "triald1s5gy.jfrog.io/devops-docker/alpine1"
+            context: './alpine1'
+          - name: alpine2
+            dockerfile_path: "./alpine2/Dockerfile"
+            repository: "triald1s5gy.jfrog.io/devops-docker/alpine2"
+            context: './alpine2'
+
+    uses: girichinna27/reusable-workflows/.github/workflows/all-scans.yml@main
+    with:
+      image_name: "${{ matrix.artifact.name }}"
+      dockerfile_path: "${{ matrix.artifact.dockerfile_path }}"
+      jfrog_repo_url: "${{ matrix.artifact.repository }}"
+      context: ${{ matrix.artifact.context }}
+      org: "ortseam"
+      application_tags: "v1.0"
+    secrets:
+      JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
+      JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}      
