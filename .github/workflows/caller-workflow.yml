@@ -22,7 +22,6 @@ jobs:
             dockerfile_path: "./alpine2/Dockerfile"
             repository: "trial451ad8.jfrog.io/dev-docker-docker/alpine2"
             image_tag: "alpine2-${{ github.run_id }}"
-
     uses: girichinna27/ortseam-worker/.github/workflows/reusable-workflow.yml@main
     with:
       image_name: "${{ matrix.artifact.name }}"
