@@ -3,25 +3,25 @@ name: Caller Workflow with Matrix Strategy
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
-  build-and-push-artifacts:
+  build:
     strategy:
       matrix:
         artifact:
           - name: alpine1
+            context: './alpine1'
             dockerfile_path: "./alpine1/Dockerfile"
             repository: "trial451ad8.jfrog.io/dev-docker-docker/alpine1"
-            context: './alpine1'
+            image_tag: "alpine1-${{ github.run_id }}"
           - name: alpine2
+            context: './alpine2'
             dockerfile_path: "./alpine2/Dockerfile"
             repository: "trial451ad8.jfrog.io/dev-docker-docker/alpine2"
-            context: './alpine2'
+            image_tag: "alpine2-${{ github.run_id }}"
 
     uses: girichinna27/ortseam-worker/.github/workflows/reusable-workflow.yml@main
     with:
@@ -33,4 +33,4 @@ jobs:
       application_tags: "v1.0"
     secrets:
       JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
-      JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}      
+      JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
