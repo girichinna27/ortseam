@@ -1,13 +1,8 @@
 # .github/workflows/caller-workflow.yml
-name: Caller Workflow with Matrix Strategy
-
+name: Build with Matrix Strategy
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -19,6 +14,7 @@ jobs:
             dockerfile_path: "./alpine1/Dockerfile"
             repository: "trial451ad8.jfrog.io/dev-docker-docker/alpine1"
             image_tag: "alpine1-${{ github.run_id }}"
+            
           - name: "alpine2"
             context: "./alpine2"
             dockerfile_path: "./alpine2/Dockerfile"
@@ -27,12 +23,16 @@ jobs:
 
     uses: girichinna27/ortseam-worker/.github/workflows/reusable-workflow.yml@main
     with:
-      image_name: "${{ matrix.artifact.name }}"
-      dockerfile_path: "${{ matrix.artifact.dockerfile_path }}"
-      jfrog_repo_url: "${{ matrix.artifact.repository }}"
-      context: "${{ matrix.artifact.context }}"
+      image_name: ${{ matrix.name }} 
+      context: ${{ matrix.context || '.' }}
+      dockerfile: ${{ matrix.dockerfile_path || '' }}  # Fixed indentation
+      image_tag: ${{ matrix.image_tag }}
+      registry: 'trial451ad8.jfrog.io'
       org: "ortseam"
       application_tags: "v1.0"
+      artifacts: ${{ matrix.name }}
+      artifactory_url: ${{ matrix.repository }}
+
     secrets:
-      JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
-      JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}
