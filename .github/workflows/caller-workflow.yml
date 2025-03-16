@@ -13,18 +13,24 @@ jobs:
   build:
     strategy:
       matrix:
-        name: [ "alpine1", "alpine2" ]
-        context: [ "./alpine1", "./alpine2" ]
-        dockerfile_path: [ "./alpine1/Dockerfile", "./alpine2/Dockerfile" ]
-        repository: [ "trial451ad8.jfrog.io/dev-docker-docker/alpine1", "trial451ad8.jfrog.io/dev-docker-docker/alpine2" ]
-        image_tag: [ "alpine1-${{ github.run_id }}", "alpine2-${{ github.run_id }}" ]
+        include:
+          - name: "alpine1"
+            context: "./alpine1"
+            dockerfile_path: "./alpine1/Dockerfile"
+            repository: "trial451ad8.jfrog.io/dev-docker-docker/alpine1"
+            image_tag: "alpine1-${{ github.run_id }}"
+          - name: "alpine2"
+            context: "./alpine2"
+            dockerfile_path: "./alpine2/Dockerfile"
+            repository: "trial451ad8.jfrog.io/dev-docker-docker/alpine2"
+            image_tag: "alpine2-${{ github.run_id }}"
 
     uses: girichinna27/ortseam-worker/.github/workflows/reusable-workflow.yml@main
     with:
       image_name: "${{ matrix.artifact.name }}"
       dockerfile_path: "${{ matrix.artifact.dockerfile_path }}"
       jfrog_repo_url: "${{ matrix.artifact.repository }}"
-      context: ${{ matrix.artifact.context }}
+      context: "${{ matrix.artifact.context }}"
       org: "ortseam"
       application_tags: "v1.0"
     secrets:
